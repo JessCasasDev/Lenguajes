@@ -1,0 +1,1 @@
+#define assign(uc1, uc2, val) uc1##uc2 = val
