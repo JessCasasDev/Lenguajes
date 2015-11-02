@@ -1,1 +1,7 @@
-#define assign(uc1, uc2, val) uc1##uc2 = val
+#include <stdio.h>
+
+int main()
+{
+        printf("Hola mundo");
+        return 0;
+}
