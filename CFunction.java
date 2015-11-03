@@ -25,7 +25,7 @@ public class CFunction extends CBaseListener{
 					int b = Integer.valueOf(ctx.multiplicativeExpression().getText());
 					//b = Math.abs(b)*-1;
 					if (a+b < a){
-						System.out.println("Error");
+						System.out.println("Error: Ensure that unsigned integer operations do not wrap");
 					}
 					else{
 						System.out.println(a+b);
