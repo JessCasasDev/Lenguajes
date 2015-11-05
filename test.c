@@ -17,6 +17,11 @@ int main()
 	if (ungetc('\n', fp) == EOF) {
 	  /* Handle error */
 	}
+
+	if( true )
+		ftell(fp);
+
+
 	if (ungetc('\r', fp) == EOF) {
 	  /* Handle error */
 	}
