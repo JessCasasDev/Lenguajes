@@ -21,10 +21,17 @@ public class Main
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			CParser parser = new CParser(tokens);
 			ParseTree tree = parser.compilationUnit();
+
+			//ParserRuleContext<Token> tree = parser.compilationUnit();
 			//Creamos un parse tree walker 
+
+
+			
 			ParseTreeWalker walker = new ParseTreeWalker();
 			
-			walker.walk(new CFunction(),tree);
+			CFunction listener =  new CFunction(parser);
+
+			walker.walk(listener,tree);
 			System.out.println("End of everything :)");	
 		}
 

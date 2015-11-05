@@ -6,7 +6,15 @@ import org.antlr.v4.runtime.misc.NotNull;
 
 
 public class CFunction extends CBaseListener{
-	int UNIT_MAX =  Integer.MAX_VALUE; 
+	//int UNIT_MAX =  Integer.MAX_VALUE; 
+
+	CParser parser;
+
+
+	public CFunction(CParser parser)
+	{
+		this.parser = parser;
+	}
 
 	@Override 
 	public void exitAdditiveExpression(@NotNull CParser.AdditiveExpressionContext ctx) { 
@@ -46,7 +54,7 @@ public class CFunction extends CBaseListener{
 			}
 		}
 	}
-
+	/*
 	@Override 
 	public void enterConstantExpression(CParser.ConstantExpressionContext ctx) {
 		if (ctx.IntegerConstant != null){
@@ -54,5 +62,13 @@ public class CFunction extends CBaseListener{
 					System.out.println("Error: " + ctx.IntegerConstant().getText() + " It's too big, the min value of int is: " + UNIT_MAX);
 				}
 		}
+	}*/
+
+	@Override 
+	public void exitPostfixExpression(CParser.PostfixExpressionContext ctx) 
+	{
+		String fullSignature = 
+		parser.getTokenStream().getText(ctx);
+		System.out.println(fullSignature + ";");
 	}
 }
