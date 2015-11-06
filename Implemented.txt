@@ -1,0 +1,4 @@
+INT30-C
+FIO13-C. Never push back anything other than one read character
+Regla implementada para los siguientes casos:
+	Liberación de memoria como una función independiente fuera de un contexto
