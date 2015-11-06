@@ -1,26 +1,7 @@
-#include <stdio.h>
+/*EXP30-C*/
 
-int main()
-{
-        23455 + -333214;
+void func(int i, int *b) {
+  int a = i + b[++i];
+  a[i++] = i;  
+  printf("%d, %d", a, i);
 }
-*/FILE *fp;
-char *file_name;
- 
-/* Initialize file_name */
- 
-fp = fopen(file_name, "rb");
-if (fp == NULL) {
-  /* Handle error */
-}
- 
-/* Read data */
- 
-if (ungetc('\n', fp) == EOF) {
-  /* Handle error */
-}
-if (ungetc('\r', fp) == EOF) {
-  /* Handle error */
-}
- */
-/* Continue */

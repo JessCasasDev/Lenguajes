@@ -1,6 +1,8 @@
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.StringTokenizer;
 import org.antlr.v4.runtime.misc.NotNull;
 
@@ -16,8 +18,13 @@ public class CFunction extends CBaseListener{
 	public CFunction(CParser parser)
 	{
 		this.parser = parser;
-		filePositionFucntion.addAll(Arrays.asList("ftell","ftello","ftello64","fseek","fseeko","fseeko64","rewind"));
+		//filePositionFucntion.addAll(Arrays.asList("ftell","ftello","ftello64","fseek","fseeko","fseeko64","rewind"));
 	}
+
+
+	/***************************************************************************************************************************/
+	/**********************************************************OVERRIDED RULES**************************************************/
+	/***************************************************************************************************************************/
 
 	@Override 
 	public void exitAdditiveExpression(@NotNull CParser.AdditiveExpressionContext ctx) { 
@@ -86,40 +93,88 @@ public class CFunction extends CBaseListener{
 	}
 
 
+
+	@Override public void exitAssignmentExpression(CParser.AssignmentExpressionContext ctx)
+	{
+		String tokens = parser.getTokenStream().getText(ctx);
+		int ruleLine = ctx.getStart().getLine();
+		
+		if (!(tokens.indexOf('[') == -1))
+		{
+			exp30C(tokens,ruleLine);	
+		}
+		else
+		{
+			//exp30C(beforeEqual,afterEqual,ruleLine);
+		}
+
+
+
+	}
+
+	ArrayList<String> volatileVars = new ArrayList<>();
+
+	@Override public void exitDeclaration(CParser.DeclarationContext ctx)
+	{
+		String tokens= parser.getTokenStream().getText(ctx);
+		int ruleLine = ctx.getStart().getLine();
+		
+		if (tokens.contains("volatile")) 
+		{
+			String regex = "\\W+";
+			String[] a = input.split(regex);
+			volatileVars.add(a.getText(a.size()-1));
+		}
+		
+
+
+	
+	}
+
+
+
 	@Override 
 	public void exitPostfixExpression(CParser.PostfixExpressionContext ctx) 
 	{
-		int countUngetc =  0;
-		String fuction = "ungetc";
-		String fullSignature = parser.getTokenStream().getText(ctx);
-		int initLine = ctx.getStart().getLine();
-		
-		//System.out.println(fuctions);		
+		String tokens= parser.getTokenStream().getText(ctx);
+		int ruleLine = ctx.getStart().getLine();
 
-		if (fullSignature.contains(fuction) && fullSignature.length() > fuction.length() )
+
+		
+	}
+
+	/***************************************************************************************************************************/
+	/**********************************************************AUXILIARY METHODS*************************************************/
+	/***************************************************************************************************************************/
+
+		void exp30C(String tokens, int ruleLine)
+	{
+		String insideLimiters = tokens.substring(tokens.indexOf('[')+1,tokens.indexOf(']'));
+		String afterEqual = tokens.substring(tokens.indexOf('=')+1,tokens.length());
+		if( insideLimiters.contains("+") || insideLimiters.contains("-"))//chequear que la variable tenga ++ 
 		{
-			StringTokenizer st =  new StringTokenizer(fullSignature.substring(fullSignature.indexOf('(')+1, fullSignature.indexOf(')')), ",");
-			st.nextToken();
-			String fileStream = st.nextToken();
-			//System.out.println("filestream "+ fileStream);
-			if (filesInStream.contains(fileStream))
+			String variable;
+			if(insideLimiters.charAt(0) == '+' || insideLimiters.charAt(0) == '-')
 			{
-				System.out.println("Warning: Multiple calls to function \"ungetc\" at line:" + initLine);
+				variable = insideLimiters.substring(2,insideLimiters.length());
 			}
 			else
-				filesInStream.add(fileStream);
-
-			//System.out.println(filesInStream);
-		}
-
-		//System.out.println(fullSignature);
-		for (int i=0; i < fuctions.size() ;i++ ) {
-			if( filePositionFucntion.contains(fuctions.get(i)))
 			{
-				filesInStream.remove(filesInStream.size()-1);
-				fuctions.remove(fuctions.get(i));
+				if (insideLimiters.contains("+")) {
+					variable = insideLimiters.substring(0,insideLimiters.indexOf('+'));	
+				}
+				else
+					variable = insideLimiters.substring(0,insideLimiters.indexOf('-'));		
+				
 			}
-		}
 
+			if (afterEqual.contains(variable)) {
+				System.out.println("Warning: The order of evaluation of arguments is unspecified and can happen in any order");
+				System.out.println("At line:" + ruleLine);
+			}
+
+		}
 	}
+
+
 }

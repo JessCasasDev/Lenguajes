@@ -2,3 +2,11 @@ INT30-C
 FIO13-C. Never push back anything other than one read character
 Regla implementada para los siguientes casos:
 	Liberación de memoria como una función independiente fuera de un contexto
+
+EXP30-C
+	https://www.securecoding.cert.org/confluence/display/c/EXP30-C.+Do+not+depend+on+the+order+of+evaluation+for+side+effects
+	Caso sin implementación 
+			i = ++i + 1;
+	Caso aceptado
+		i = i++;
+
