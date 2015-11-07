@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -80,16 +81,7 @@ public class CFunction extends CBaseListener{
 	@Override 
 	public void exitTypedefName(CParser.TypedefNameContext ctx) 
 	{
-		String tokens = parser.getTokenStream().getText(ctx);
-
-		//System.out.println(tokens);
-		/*
-		if (!( tokens.indexOf('(') == -1 ))
-		{
-			fuctions.add(tokens.substring(0,tokens.indexOf(')')-1));
-		}
-		*/ //Esta regla toma identificadores, pueden haber variables tambien
-		fuctions.add(tokens);
+		
 	}
 
 
@@ -112,23 +104,31 @@ public class CFunction extends CBaseListener{
 
 	}
 
-	ArrayList<String> volatileVars = new ArrayList<>();
+	//<String,String>
+	//Identifier, Types!
+	HashMap<String,String> variables =  new HashMap<>();
+	ArrayList<String> identifiers =  new ArrayList<>();
+
+	@Override public void exitDeclarationSpecifiers(CParser.DeclarationSpecifiersContext ctx)
+	{
+		identifiers.add(parser.getTokenStream().getText(ctx));
+	}
 
 	@Override public void exitDeclaration(CParser.DeclarationContext ctx)
 	{
 		String tokens= parser.getTokenStream().getText(ctx);
 		int ruleLine = ctx.getStart().getLine();
-		
+		System.out.println("exitDeclaration");
+		System.out.println(tokens);
+
+		/*
 		if (tokens.contains("volatile")) 
-		{
+		{   
 			String regex = "\\W+";
 			String[] a = input.split(regex);
 			volatileVars.add(a.getText(a.size()-1));
 		}
-		
-
-
-	
+		*/
 	}
 
 
@@ -149,6 +149,7 @@ public class CFunction extends CBaseListener{
 
 		void exp30C(String tokens, int ruleLine)
 	{
+		System.out.println("Entre a exp30C");
 		String insideLimiters = tokens.substring(tokens.indexOf('[')+1,tokens.indexOf(']'));
 		String afterEqual = tokens.substring(tokens.indexOf('=')+1,tokens.length());
 		if( insideLimiters.contains("+") || insideLimiters.contains("-"))//chequear que la variable tenga ++ 
