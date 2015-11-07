@@ -29,34 +29,44 @@ public class CFunction extends CBaseListener{
 
 	@Override 
 	public void exitAdditiveExpression(@NotNull CParser.AdditiveExpressionContext ctx) { 
-		try{
-			if (ctx.additiveExpression() != null && ctx.multiplicativeExpression() != null){
-				/*
-				if (Integer.valueOf(ctx.additiveExpression().getText()) > UNIT_MAX){
-					System.out.println("Error: " + ctx.additiveExpression().getText() + " It's too big, the min value of int is: " + UNIT_MAX);
+		if (ctx.additiveExpression() != null && ctx.multiplicativeExpression() != null){
+			int initLine = ctx.getStart().getLine();
+			String tokens = parser.getTokenStream().getText(ctx);
+			String t = "";
+			for (int i=0; i<tokens.length(); i++){
+				if (tokens.charAt(i) == '+'){
+					t = "Add";
+					break;
 				}
-				else if (Integer.valueOf(ctx.additiveExpression().getText()) > UNIT_MAX){
-					System.out.println("Error: " + ctx.multiplicativeExpression().getText() + " It's too big, the min value of int is: " + UNIT_MAX);
+				else if(tokens.charAt(i) == '-'){
+					t = "Subs";
+					break;
 				}
-				else{*/
-				/*Regla: https://www.securecoding.cert.org/confluence/display/c/INT30-C.+Ensure+that+unsigned+integer+operations+do+not+wrap*/
-					int a = Integer.valueOf(ctx.additiveExpression().getText());
-					int b = Integer.valueOf(ctx.multiplicativeExpression().getText());
-					//b = Math.abs(b)*-1;
-					if (a+b < a){
-						System.out.println("Error: Ensure that unsigned integer operations do not wrap");
+			}
+			int a = Integer.valueOf(ctx.additiveExpression().getText());
+			int b = Integer.valueOf(ctx.multiplicativeExpression().getText());
+			Boolean s = false;
+					if (a > 0 && b > 0){ //Significa que son Unsigned
+						if (t.equals("Add")){
+							if (UNIT_MAX - a < b)
+								s = true;
+							else if (a+b<a)
+								s = true;
+							else
+								System.out.println(a+b);
+						}
+						if (t.equals("Subs")){
+							if (a < b)
+								s = true;
+							else if (a-b > a){
+								s = true;
+							else
+								System.out.println(a-b);
+						}
+						if (s) System.out.println("Warning: Ensure that unsigned integer operations do not wrap at line: " + initLine);
 					}
-					else{
-						System.out.println(a+b);
-					}
 				}
-			
-		}catch(Exception e){
-			System.out.println(e);
-		}
-
-	}
-
+			}
 	@Override 
 	public void exitUnaryExpression(@NotNull CParser.UnaryExpressionContext ctx) { 
 		if (ctx.unaryOperator()!= null){
