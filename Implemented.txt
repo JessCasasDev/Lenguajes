@@ -1,4 +1,4 @@
-INT30-C
+﻿INT30-C
 FIO13-C. Never push back anything other than one read character
 Regla implementada para los siguientes casos:
 	Liberación de memoria como una función independiente fuera de un contexto
@@ -10,3 +10,14 @@ EXP30-C
 	Caso aceptado
 		i = i++;
 
+***********************************************************************************************************************************************
+
+Rule 04. Integers (INT)
+
+https://www.securecoding.cert.org/confluence/display/c/INT30-C.+Ensure+that+unsigned+integer+operations+do+not+wrap
+INT30-C. Ensure that unsigned integer operations do not wrap
+Regla Implementada para Adición y Substracción de unsigned int 
+
+https://www.securecoding.cert.org/confluence/display/c/INT32-C.+Ensure+that+operations+on+signed+integers+do+not+result+in+overflow
+INT32-C. Ensure that operations on signed integers do not result
+	 in overflow
