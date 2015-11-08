@@ -12,6 +12,8 @@ id func(void) {
 
 
  void func() {
-  unsigned int usum = 956 + 2147483645;
+  unsigned int usum = 956 + 2147483645; //Warning Wrap 
+
+  signed int suma = -6 + 2147483645; //Warning Overflow
 
 }
