@@ -27,12 +27,17 @@ public class CFunction extends CBaseListener{
 	/**********************************************************OVERRIDED RULES**************************************************/
 	/***************************************************************************************************************************/
 
+	
 	@Override 
-	public void exitAdditiveExpression(@NotNull CParser.AdditiveExpressionContext ctx) { 
+	public void exitAdditiveExpression(@NotNull CParser.AdditiveExpressionContext ctx) 
+	{ 
 		if (ctx.additiveExpression() != null && ctx.multiplicativeExpression() != null){
 			int initLine = ctx.getStart().getLine();
 			String tokens = parser.getTokenStream().getText(ctx);
 			String t = "";
+
+			int a = Integer.valueOf(ctx.additiveExpression().getText());
+			int b = Integer.valueOf(ctx.multiplicativeExpression().getText());
 			for (int i=0; i<tokens.length(); i++){
 				if (tokens.charAt(i) == '+'){
 					t = "Add";
@@ -43,27 +48,45 @@ public class CFunction extends CBaseListener{
 					break;
 				}
 			}
-			int a = Integer.valueOf(ctx.additiveExpression().getText());
-			int b = Integer.valueOf(ctx.multiplicativeExpression().getText());
 			Boolean s = false;
+			System.out.println(t);
 					if (a > 0 && b > 0){ //Significa que son Unsigned
 						if (t.equals("Add")){
-							if (UNIT_MAX - a < b)
+							if (MAX_INT - a < b)
 								s = true;
 							else if (a+b<a)
 								s = true;
-							else
-								System.out.println(a+b);
 						}
 						if (t.equals("Subs")){
-							if (a < b)
+							if (a < b){
 								s = true;
+							}
 							else if (a-b > a){
 								s = true;
-							else
-								System.out.println(a-b);
+							}
 						}
-						if (s) System.out.println("Warning: Ensure that unsigned integer operations do not wrap at line: " + initLine);
+						if (s){
+							System.out.println("Warning: Ensure that unsigned integer operations do not wrap at line: " + initLine);
+							s = true;
+						}
+					}
+					else{
+					//Cuando son signed
+						if (t.equals("Add")){
+							if (((b > 0) && (a> (MAX_INT - b))) || ((b < 0) && (a < (MIN_INT - b)))) {
+								s = true;
+							}
+						}
+						if (t.equals("Subs")){
+							if ((b > 0 && a < MIN_INT + b) ||  (b < 0 && a > MIN_INT + b)) {
+								s = true;
+							}
+						}
+						if (s){
+							System.out.println("Warning: Ensure that operations on signed integers do not result in overflow at line: " + initLine);
+							s = true;
+						}
+
 					}
 				}
 			}
