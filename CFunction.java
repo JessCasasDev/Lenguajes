@@ -49,47 +49,45 @@ public class CFunction extends CBaseListener{
 				}
 			}
 			Boolean s = false;
-			System.out.println(t);
-					if (a > 0 && b > 0){ //Significa que son Unsigned
-						if (t.equals("Add")){
-							if (MAX_INT - a < b)
-								s = true;
-							else if (a+b<a)
-								s = true;
-						}
-						if (t.equals("Subs")){
-							if (a < b){
-								s = true;
-							}
-							else if (a-b > a){
-								s = true;
-							}
-						}
-						if (s){
-							System.out.println("Warning: Ensure that unsigned integer operations do not wrap at line: " + initLine);
-							s = true;
-						}
+			if (a > 0 && b > 0){ //Significa que son Unsigned
+				if (t.equals("Add")){
+					if (MAX_INT - a < b)
+						s = true;
+					else if (a+b<a)
+						s = true;
+				}
+				if (t.equals("Subs")){
+					if (a < b){
+						s = true;
 					}
-					else{
-					//Cuando son signed
-						if (t.equals("Add")){
-							if (((b > 0) && (a> (MAX_INT - b))) || ((b < 0) && (a < (MIN_INT - b)))) {
-								s = true;
-							}
-						}
-						if (t.equals("Subs")){
-							if ((b > 0 && a < MIN_INT + b) ||  (b < 0 && a > MIN_INT + b)) {
-								s = true;
-							}
-						}
-						if (s){
-							System.out.println("Warning: Ensure that operations on signed integers do not result in overflow at line: " + initLine);
-							s = true;
-						}
-
+					else if (a-b > a){
+						s = true;
 					}
 				}
+				if (s){
+					System.out.println("Warning: Ensure that unsigned integer operations do not wrap at line: " + initLine);
+					s = false;
+				}
 			}
+			else{//Cuando son signed
+				if (t.equals("Add")){
+					if (((b > 0) && (a> (MAX_INT - b))) || ((b < 0) && (a < (MIN_INT - b)))) {
+						s = true;
+					}
+				}
+				if (t.equals("Subs")){
+					if ((b > 0 && a < MIN_INT + b) ||  (b < 0 && a > MIN_INT + b)) {
+						s = true;
+					}
+				}
+				if (s){
+					System.out.println("Warning: Ensure that operations on signed integers do not result in overflow at line: " + initLine);
+					s = false;
+				}
+
+			}
+		}
+	}
 	@Override 
 	public void exitUnaryExpression(@NotNull CParser.UnaryExpressionContext ctx) { 
 		if (ctx.unaryOperator()!= null){
