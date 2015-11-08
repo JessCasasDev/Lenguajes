@@ -12,6 +12,6 @@ id func(void) {
 
 
  void func() {
-  unsigned int usum = 956 + 9384324;
+  unsigned int usum = 956 + 2147483645;
 
 }
