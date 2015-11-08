@@ -11,7 +11,8 @@ import org.antlr.v4.runtime.misc.NotNull;
 
 
 public class CFunction extends CBaseListener{
-	//int UNIT_MAX =  Integer.MAX_VALUE; 
+	int MAX_INT =  Integer.MAX_VALUE; 
+	int MIN_INT = Integer.MIN_VALUE;
 
 	CParser parser;
 

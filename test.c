@@ -9,3 +9,9 @@ id func(void) {
   ipp = (int**) &ip; /* Constraint violation; may produce a warning diagnostic */
   *ipp = &i; /* Valid */
   }
+
+
+ void func() {
+  unsigned int usum = 956 + 9384324;
+
+}
