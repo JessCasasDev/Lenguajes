@@ -97,6 +97,33 @@ public class CFunction extends CBaseListener{
 			}
 		}
 	}
+
+	@Override 
+	public void enterMultiplicativeExpression(CParser.MultiplicativeExpressionContext ctx) 
+	{ 
+		if (ctx.multiplicativeExpression() != null && ctx.castExpression() != null){
+			int a = Integer.valueOf(ctx.multiplicativeExpression().getText());
+			int b = Integer.valueOf(ctx.castExpression().getText());
+			String tokens = parser.getTokenStream().getText(ctx);
+			String type = "";
+			int initLine = ctx.getStart().getLine();
+
+			for (int i=0; i<tokens.length(); i++){
+				if (tokens.charAt(i) == '/'){
+					type = "div";
+				}
+				if (tokens.charAt(i) == '%'){
+					type = "mod";
+				}
+			}
+			if (type.equals("div") || type.equals("mod")){
+				if (b == 0){
+					System.out.println("Error: Ensure that division and remainder operations do not result in divide-by-zero errors at line: " + initLine);
+				}
+			}
+		}
+
+	}
 	/*
 	@Override 
 	public void enterConstantExpression(CParser.ConstantExpressionContext ctx) {

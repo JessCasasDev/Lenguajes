@@ -21,3 +21,6 @@ Regla Implementada para Adición y Substracción de unsigned int
 https://www.securecoding.cert.org/confluence/display/c/INT32-C.+Ensure+that+operations+on+signed+integers+do+not+result+in+overflow
 INT32-C. Ensure that operations on signed integers do not result
 	 in overflow
+
+https://www.securecoding.cert.org/confluence/display/c/INT33-C.+Ensure+that+division+and+remainder+operations+do+not+result+in+divide-by-zero+errors
+INT33-C. Ensure that division and remainder operations do not result in divide-by-zero errors

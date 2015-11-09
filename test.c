@@ -16,4 +16,7 @@ id func(void) {
 
   signed int suma = -6 + 2147483645; //Warning Overflow
 
+  signed int division = 3 / 0; //Error Division por 0 
+
+  signed int division = 3 % 0; //Error Division por 0 
 }
