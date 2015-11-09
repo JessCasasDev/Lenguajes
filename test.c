@@ -19,4 +19,6 @@ id func(void) {
   signed int division = 3 / 0; //Error Division por 0 
 
   signed int division = 3 % 0; //Error Division por 0 
+
+  signed a = (signed int) 8.9;
 }
