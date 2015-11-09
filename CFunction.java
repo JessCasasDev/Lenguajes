@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 
 
 public class CFunction extends CBaseListener{
-	//int UNIT_MAX =  Integer.MAX_VALUE; 
+	int UNIT_MAX =  Integer.MAX_VALUE; 
 
 	CParser parser;
 
@@ -58,8 +58,10 @@ public class CFunction extends CBaseListener{
 						if (t.equals("Subs")){
 							if (a < b)
 								s = true;
-							else if (a-b > a){
+							else if (a-b > a)
+							{
 								s = true;
+							}
 							else
 								System.out.println(a-b);
 						}
@@ -68,7 +70,8 @@ public class CFunction extends CBaseListener{
 				}
 			}
 	@Override 
-	public void exitUnaryExpression(@NotNull CParser.UnaryExpressionContext ctx) { 
+	public void exitUnaryExpression(@NotNull CParser.UnaryExpressionContext ctx) 
+	{ 
 		if (ctx.unaryOperator()!= null){
 			if (ctx.unaryOperator().getText().equals('-')){
 				int value = Math.abs(Integer.valueOf(ctx.castExpression().getText()))*-1;
@@ -110,35 +113,57 @@ public class CFunction extends CBaseListener{
 			//exp30C(beforeEqual,afterEqual,ruleLine);
 		}
 
+		//System.out.println("Antes de ctx");
+		if(ctx.assignmentOperator() != null )
+		{
+			if (ctx.assignmentOperator().getText().equals("=") )
+			{
+				String leftVariable = ctx.unaryExpression().getText();
+				String rightVariable = ctx.assignmentExpression().getText();
+				exp32C(leftVariable,rightVariable,ruleLine);
+			}
 
+		}
 
 	}
 
 	//<String,String>
 	//Identifier, Types!
-	HashMap<String,String> variables =  new HashMap<>();
-	ArrayList<String> identifiers =  new ArrayList<>();
+	HashMap<String,ArrayList<String>> variables =  new HashMap<>();
+	ArrayList<String> types =  new ArrayList<>();
 
 	@Override public void exitDeclarationSpecifiers(CParser.DeclarationSpecifiersContext ctx)
 	{
-		identifiers.add(parser.getTokenStream().getText(ctx));
+	
+	}
+
+
+	@Override public void exitDeclarationSpecifier(CParser.DeclarationSpecifierContext ctx)
+	{
+		types.add(parser.getTokenStream().getText(ctx));
+	}
+
+	@Override public void exitDirectDeclarator(CParser.DirectDeclaratorContext ctx)
+	{
+		variables.put(parser.getTokenStream().getText(ctx),types);
+		 types = new ArrayList<>();
+
 	}
 
 	@Override public void exitDeclaration(CParser.DeclarationContext ctx)
 	{
 		String tokens= parser.getTokenStream().getText(ctx);
 		int ruleLine = ctx.getStart().getLine();
-		System.out.println("exitDeclaration");
-		System.out.println(tokens);
+		
+		//System.out.println(variables);
 
-		/*
-		if (tokens.contains("volatile")) 
-		{   
-			String regex = "\\W+";
-			String[] a = input.split(regex);
-			volatileVars.add(a.getText(a.size()-1));
-		}
-		*/
+
+	}
+	
+
+	@Override public void exitInitDeclaratorList(CParser.InitDeclaratorListContext ctx)
+	{
+
 	}
 
 
@@ -157,7 +182,36 @@ public class CFunction extends CBaseListener{
 	/**********************************************************AUXILIARY METHODS*************************************************/
 	/***************************************************************************************************************************/
 
-		void exp30C(String tokens, int ruleLine)
+
+	void exp32C(String leftVariable, String rightVariable, int ruleLine)
+	{
+		if (leftVariable.charAt(0) == '*') 
+		{
+			leftVariable = leftVariable.substring(1,leftVariable.length());
+		}
+		
+		int lengthRight = rightVariable.length()-1;
+		String aux  = "";
+		while ( !(rightVariable.charAt(lengthRight) == ('&') || rightVariable.charAt(lengthRight) == ('*')) && lengthRight > 0 )
+		{
+			aux = aux+=rightVariable.charAt(lengthRight)+"";
+			lengthRight--;
+		}
+		StringBuffer reverse = new StringBuffer(aux);
+		aux = new String(reverse.reverse());
+		//System.out.println(aux);
+		rightVariable = aux;
+
+
+
+		if ( variables.get(leftVariable).contains("volatile") && !variables.get(rightVariable).contains("volatile")) 
+		{
+			System.out.println("Warning:  Volatile objects can not be accessed through a non-volatile-qualified reference");
+			System.out.println("Line: " + ruleLine);
+		}
+	}
+
+	void exp30C(String tokens, int ruleLine)
 	{
 		System.out.println("Entre a exp30C");
 		String insideLimiters = tokens.substring(tokens.indexOf('[')+1,tokens.indexOf(']'));

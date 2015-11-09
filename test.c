@@ -1,11 +1,19 @@
-id func(void) {
-  static volatile int **ipp;
-  static int *ip;
-  static volatile int i = 0;
- 
-  printf("i = %d.\n", i);
- 
-  ipp = &ip; /* May produce a warning diagnostic */
-  ipp = (int**) &ip; /* Constraint violation; may produce a warning diagnostic */
-  *ipp = &i; /* Valid */
+void open_some_file(const char *file) {
+  FILE *f = fopen(file, "r");
+  if (NULL != f) {
+    /* File exists, handle error */
+  } else {
+    if (fclose(f) == EOF) {
+      /* Handle error */
+    }
+    f = fopen(file, "w");
+    if (NULL == f) {
+      /* Handle error */
+    }
+  
+    /* Write to file */
+    if (fclose(f) == EOF) {
+      /* Handle error */
+    }
   }
+}
