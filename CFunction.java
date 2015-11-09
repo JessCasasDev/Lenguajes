@@ -124,6 +124,40 @@ public class CFunction extends CBaseListener{
 		}
 
 	}
+
+	@Override 
+	public void enterPrimaryExpression(CParser.PrimaryExpressionContext ctx) 
+	{ 
+		//TODO  SOLO SE PUEDE CON INTEGER 
+	/*	if (ctx.Constant() != null){
+			int initLine = ctx.getStart().getLine();
+		//Caso de Entero  //TODO REVISAR COMO SE DIFERENCIA EL ENTERO CON EL FLOTANTE 
+			int num = Integer.valueOf(ctx.Constant().getText());
+			int precision = 0;
+			while (num != 0) {
+				if (num % 2 == 1) {
+					precision++;
+				}
+				num >>= 1.0;
+			}
+
+			if (precision > 32){
+				System.out.println("Warning: Use correct integer precisions at line: " + initLine);
+			}
+		}*/
+
+	}
+
+	@Override 
+	public void enterIterationStatement(CParser.IterationStatementContext ctx) 
+	{ 
+		String tokens = parser.getTokenStream().getText(ctx);
+		String t = String.valueOf(ctx.getToken(0,1));
+		System.out.println("ttttttttttt" + t);
+		if (t.equals("for")){
+
+		}
+	}
 	/*
 	@Override 
 	public void enterConstantExpression(CParser.ConstantExpressionContext ctx) {
