@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 void open_some_file(const char *file) {
   FILE *f = fopen(file, "r");
   if (NULL != f) {
@@ -10,13 +9,15 @@ void open_some_file(const char *file) {
     f = fopen(file, "w");
     if (NULL == f) {
       /* Handle error */
-    }
+   }
   
     /* Write to file */
-    if (fclose(f) == EOF) {
+  if (fclose(f) == EOF) {
       /* Handle error */
     }
-=======
+  }
+}
+
 id func(void) {
   static volatile int **ipp;
   static int *ip;
@@ -30,8 +31,10 @@ id func(void) {
   }
 
 
- void func() {
-  unsigned int usum = 956 + 2147483647; //Warning Wrap 
+ void func(unsigned int a, unsigned int b) {
+  signed int m = a +b;
+
+  signed int usum = 956 +2147483647 ; //Warning Wrap 
 
   signed int suma = -6 + 2147483645; //Warning Overflow
 
@@ -41,9 +44,5 @@ id func(void) {
 
   for (int i= 0; i < 10; i++){
 
-<<<<<<< HEAD
->>>>>>> origin/Archivo1
-=======
->>>>>>> 520dcf6d0b751b99e58bff2edcecd33f0e9a2f62
   }
 }

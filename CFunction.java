@@ -8,20 +8,9 @@ import java.util.StringTokenizer;
 import org.antlr.v4.runtime.misc.NotNull;
 
 
-
-
 public class CFunction extends CBaseListener{
-////< HEAD
-////< HEAD
-	int UNIT_MAX =  Integer.MAX_VALUE; 
-////=
 	int MAX_INT =  Integer.MAX_VALUE; 
 	int MIN_INT = Integer.MIN_VALUE;
-//>>> origin/Archivo1
-////=
-	int MAX_INT =  Integer.MAX_VALUE; 
-	int MIN_INT = Integer.MIN_VALUE;
-//>>> 520dcf6d0b751b99e58bff2edcecd33f0e9a2f62
 
 	CParser parser;
 
@@ -36,72 +25,8 @@ public class CFunction extends CBaseListener{
 	/***************************************************************************************************************************/
 	/**********************************************************OVERRIDED RULES**************************************************/
 	/***************************************************************************************************************************/
-
 	
-	@Override 
-	public void exitAdditiveExpression(@NotNull CParser.AdditiveExpressionContext ctx) 
-	{ 
-		if (ctx.additiveExpression() != null && ctx.multiplicativeExpression() != null){
-			int initLine = ctx.getStart().getLine();
-			String tokens = parser.getTokenStream().getText(ctx);
-			String t = "";
-
-			int a = Integer.valueOf(ctx.additiveExpression().getText());
-			int b = Integer.valueOf(ctx.multiplicativeExpression().getText());
-			for (int i=0; i<tokens.length(); i++){
-				if (tokens.charAt(i) == '+'){
-					t = "Add";
-					break;
-				}
-				else if(tokens.charAt(i) == '-'){
-					t = "Subs";
-					break;
-				}
-			}
-			Boolean s = false;
-					
-			if (a > 0 && b > 0){ //Significa que son Unsigned
-				if (t.equals("Add")){
-					if (MAX_INT - a < b)
-						s = true;
-					else if (a+b<a)
-						s = true;
-				}
-				if (t.equals("Subs")){
-					if (a < b){
-						s = true;
-					}
-					else if (a-b > a){
-						s = true;
-					}
-				}
-				if (s){
-					System.out.println("Warning: Ensure that unsigned integer operations do not wrap at line: " + initLine);
-					s = false;
-				}
-			}
-			else{//Cuando son signed
-				if (t.equals("Add")){
-					if (((b > 0) && (a> (MAX_INT - b))) || ((b < 0) && (a < (MIN_INT - b)))) {
-						s = true;
-					}
-				}
-				if (t.equals("Subs")){
-					if ((b > 0 && a < MIN_INT + b) ||  (b < 0 && a > MIN_INT + b)) {
-						s = true;
-					}
-					else if (a-b > a){
-						s = true;
-					}
-				}
-				if (s){
-					System.out.println("Warning: Ensure that operations on signed integers do not result in overflow at line: " + initLine);
-					s = false;
-				}
-
-			}
-		}
-	}
+	
 	@Override 
 	public void exitUnaryExpression(@NotNull CParser.UnaryExpressionContext ctx) 
 	{ 
@@ -116,6 +41,8 @@ public class CFunction extends CBaseListener{
 	public void enterMultiplicativeExpression(CParser.MultiplicativeExpressionContext ctx) 
 	{ 
 		if (ctx.multiplicativeExpression() != null && ctx.castExpression() != null){
+		//	String w = variables.get(q);
+	//		System.out.println(w);
 			int a = Integer.valueOf(ctx.multiplicativeExpression().getText());
 			int b = Integer.valueOf(ctx.castExpression().getText());
 			String tokens = parser.getTokenStream().getText(ctx);
@@ -167,7 +94,6 @@ public class CFunction extends CBaseListener{
 	{ 
 		String tokens = parser.getTokenStream().getText(ctx);
 		String t = String.valueOf(ctx.getToken(0,1));
-		System.out.println("ttttttttttt" + t);
 		if (t.equals("for")){
 
 		}
@@ -226,12 +152,7 @@ public class CFunction extends CBaseListener{
 	HashMap<String,ArrayList<String>> variables =  new HashMap<>();
 	ArrayList<String> types =  new ArrayList<>();
 
-	@Override public void exitDeclarationSpecifiers(CParser.DeclarationSpecifiersContext ctx)
-	{
 	
-	}
-
-
 	@Override public void exitDeclarationSpecifier(CParser.DeclarationSpecifierContext ctx)
 	{
 		types.add(parser.getTokenStream().getText(ctx));
@@ -243,15 +164,119 @@ public class CFunction extends CBaseListener{
 		 types = new ArrayList<>();
 
 	}
-
 	@Override public void exitDeclaration(CParser.DeclarationContext ctx)
 	{
+
 		String tokens= parser.getTokenStream().getText(ctx);
 		int ruleLine = ctx.getStart().getLine();
-		
-		//System.out.println(variables);
+		String q = ctx.getText();
+		if (q.contains("+") || q.contains("-"))
+			regla(q, ruleLine);
 
+	}
 
+	public void regla(String t, int line){
+		String f = t;
+		Boolean unsigned = false, signed = false;
+		if (f.contains("unsigned")){
+			f = f.substring("unsigned".length(),f.length() );
+			unsigned = true;
+		}
+		if (f.contains("signed")){
+
+			f = f.substring("signed".length(),f.length() );
+			signed = true;
+		}
+
+		if (f.contains("int")){
+			f = f.substring("int".length(), f.length());
+			String var  = "";
+			while (f.contains(";")){
+				for (int i=0; i<f.length(); i++){
+					if (!(f.charAt(i) == '=')){
+						var = var + f.charAt(i);
+					}
+					else{
+						break;
+					}
+				}
+
+				int pos_in = f.indexOf("=");
+				String a ="";
+				int in_op = 0;
+				char op = 'a';
+				if ((f.charAt(pos_in+1)) == '-') {
+					a = a+'-';
+					pos_in++;
+				}
+				for (int i=pos_in+1; i<f.length(); i++){
+					if (!((f.charAt(i) == '-') || (f.charAt(i) == '+'))){
+						a = a + f.charAt(i);
+					}
+					else{
+						op = f.charAt(i);
+						in_op = i;
+						break;
+					}
+				}
+				String b = "";
+				for (int i=in_op+1; i<f.length(); i++){
+					if (!(f.charAt(i) == ';')) {
+						b = b + f.charAt(i);
+					}
+					else{
+						f = f.substring(0,f.length()-1);
+						break;
+					}
+				}
+				
+				if (b.contains("(") && b.contains("-")) b=b.substring(1,b.length()-1);
+
+				Integer a_s = 0;
+				if (a.charAt(0) == '-'){
+					a = a.substring(1,a.length());
+					a_s	= Integer.valueOf(a);
+				}
+				else a_s = Integer.valueOf(a);
+
+				Integer b_s = Integer.valueOf(b);
+				Boolean s = false;	
+
+				if (unsigned){					
+
+					if (op =='+' ){
+						if ((MAX_INT - a_s < b_s) || (a_s+b_s<a_s))
+							s = true;
+					}
+					if (op == '-') 	{
+						if ((a_s < b_s) || (a_s-b_s > a_s)){
+							s = true;
+						}
+					}
+					if (s){
+						System.out.println("Warning: Ensure that unsigned integer operations do not wrap at line: " + line);
+						s = false;
+					}
+				}
+				if(signed){
+
+					if (op =='+'){
+						if (((b_s > 0) && (a_s> (MAX_INT - b_s))) || ((b_s < 0) && (a_s < (MIN_INT - b_s)))) {
+							s = true;
+						}
+					}
+					if (op == '-'){
+						if ((b_s > 0 && a_s < MIN_INT + b_s) ||  (b_s < 0 && a_s > MIN_INT + b_s)  || (a_s-b_s > a_s))  {
+							s = true;
+						}
+					}
+					if (s){
+						System.out.println("Warning: Ensure that operations on signed integers do not result in overflow at line: " + line);
+						s = false;
+					}
+				}
+			}
+		}
 	}
 	
 	//Solo una linea de prueba
@@ -338,3 +363,4 @@ public class CFunction extends CBaseListener{
 
 
 }
+
