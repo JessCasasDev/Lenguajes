@@ -19,10 +19,11 @@ public class CFunction extends CBaseListener{
 	int MIN_INT = Integer.MIN_VALUE;
 //>>> origin/Archivo1
 ////=
+	/*
 	int MAX_INT =  Integer.MAX_VALUE; 
 	int MIN_INT = Integer.MIN_VALUE;
 //>>> 520dcf6d0b751b99e58bff2edcecd33f0e9a2f62
-
+*/
 	CParser parser;
 
 
@@ -162,6 +163,28 @@ public class CFunction extends CBaseListener{
 
 	}
 
+	@Override public void exitBlockItem(CParser.BlockItemContext ctx)
+	{
+		String tokens = parser.getTokenStream().getText(ctx);
+		int ruleLine = ctx.getStart().getLine();
+
+		if (tokens.contains("fputs")) {
+			fcloseUsed = false;
+		}
+
+		if ((tokens.contains("printf") &&(fcloseUsed))) {
+			System.out.println("Warning: The stdout is used after it is closed ");
+			System.out.println("Line: " + ruleLine);
+			//fcloseUsed = false;
+		}else if (tokens.contains("getc")&&(fopenWithStdin))
+		{
+			System.out.println("Warning: The stdin is used after it is used ");
+			System.out.println("Line: " + ruleLine);
+			//fopenWithStdin = false;
+		}
+	}
+
+
 	@Override 
 	public void enterIterationStatement(CParser.IterationStatementContext ctx) 
 	{ 
@@ -219,7 +242,42 @@ public class CFunction extends CBaseListener{
 
 		}
 
+		if (tokens.contains("=")) 
+		{	
+			//System.out.println("Cadena: " + tokens);
+			if (tokens.contains("fopen") && tokens.contains("\"r\"") )
+			{
+				countFOpen = true;
+			}
+			else if (tokens.contains("fopen") && tokens.contains("\"w\""))
+			{
+				countFOpen = false;
+			}
+			if (!countFOpen) {
+				System.out.println("Warning:  An attacker can exploit the race window between the two calls to fopen() to overwrite an existing file");
+				System.out.println("Line: "  + ruleLine);
+				countFOpen =true;
+			}	
+		}
+
 	}
+
+	boolean countFOpen = true; 
+	boolean fcloseUsed = false;
+	boolean fopenWithStdin = false;
+	@Override public void exitSelectionStatement(CParser.SelectionStatementContext ctx)
+	{
+		String tokens = parser.getTokenStream().getText(ctx);
+		int ruleLine = ctx.getStart().getLine();
+		
+		if (tokens.contains("fclose")&& (tokens.contains("stdout"))) {
+			fcloseUsed = true;
+		}
+		if (tokens.contains("fopen")&& (tokens.contains("stdin"))) {
+			fopenWithStdin = true;
+		}
+	}
+
 
 	//<String,String>
 	//Identifier, Types!
@@ -240,7 +298,7 @@ public class CFunction extends CBaseListener{
 	@Override public void exitDirectDeclarator(CParser.DirectDeclaratorContext ctx)
 	{
 		variables.put(parser.getTokenStream().getText(ctx),types);
-		 types = new ArrayList<>();
+		types = new ArrayList<>();
 
 	}
 

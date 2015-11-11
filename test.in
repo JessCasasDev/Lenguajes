@@ -5,3 +5,55 @@ void func(int i, int *b) {
   a[i++] = i;  
   printf("%d, %d", a, i);
 }
+
+/*EXP32-C*/
+
+void func(void) 
+ 		{
+		  static volatile int **ipp;
+		  static int *ip;
+		  static volatile int i = 0;
+		 
+		  printf("i = %d.\n", i);
+		 
+		  ipp = &ip; /* May produce a warning diagnostic */
+		  ipp = (int**) &ip; /* Constraint violation; may produce a warning diagnostic */
+		  *ipp = &i; /* Valid */
+		  if (*ip != 0) { /* Valid */
+		    /* ... */
+		  }
+		}
+
+/*FIO45-C*/
+
+void open_some_file(const char *file) {
+  FILE *f = fopen(file, "r");
+  if (NULL != f) {
+    /* File exists, handle error */
+  } else {
+    if (fclose(f) == EOF) {
+      /* Handle error */
+    }
+    f = fopen(file, "w");
+    if (NULL == f) {
+      
+    }
+  
+    /* Write to file */
+    if (fclose(f) == EOF) {
+      /* Handle error */
+    }
+}
+}
+
+/*FIO46-C*/
+  int close_stdout(void) {
+    if (fclose(stdout) == EOF) {
+      return -1;
+    }
+
+    //fputs("stdout successfully closed.", stderr);
+    
+    printf("stdout successfully closed.\n");
+    return 0;
+  }
