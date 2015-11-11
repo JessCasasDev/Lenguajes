@@ -12,11 +12,16 @@ import org.antlr.v4.runtime.misc.NotNull;
 
 public class CFunction extends CBaseListener{
 <<<<<<< HEAD
+<<<<<<< HEAD
 	int UNIT_MAX =  Integer.MAX_VALUE; 
 =======
 	int MAX_INT =  Integer.MAX_VALUE; 
 	int MIN_INT = Integer.MIN_VALUE;
 >>>>>>> origin/Archivo1
+=======
+	int MAX_INT =  Integer.MAX_VALUE; 
+	int MIN_INT = Integer.MIN_VALUE;
+>>>>>>> 520dcf6d0b751b99e58bff2edcecd33f0e9a2f62
 
 	CParser parser;
 
@@ -55,6 +60,7 @@ public class CFunction extends CBaseListener{
 			}
 			Boolean s = false;
 <<<<<<< HEAD
+<<<<<<< HEAD
 					if (a > 0 && b > 0){ //Significa que son Unsigned
 						if (t.equals("Add")){
 							if (UNIT_MAX - a < b)
@@ -76,6 +82,8 @@ public class CFunction extends CBaseListener{
 						}
 						if (s) System.out.println("Warning: Ensure that unsigned integer operations do not wrap at line: " + initLine);
 =======
+=======
+>>>>>>> 520dcf6d0b751b99e58bff2edcecd33f0e9a2f62
 			if (a > 0 && b > 0){ //Significa que son Unsigned
 				if (t.equals("Add")){
 					if (MAX_INT - a < b)
@@ -86,6 +94,7 @@ public class CFunction extends CBaseListener{
 				if (t.equals("Subs")){
 					if (a < b){
 						s = true;
+<<<<<<< HEAD
 >>>>>>> origin/Archivo1
 					}
 					else if (a-b > a){
@@ -106,6 +115,34 @@ public class CFunction extends CBaseListener{
 				if (t.equals("Subs")){
 					if ((b > 0 && a < MIN_INT + b) ||  (b < 0 && a > MIN_INT + b)) {
 						s = true;
+=======
+>>>>>>> 520dcf6d0b751b99e58bff2edcecd33f0e9a2f62
+					}
+					else if (a-b > a){
+						s = true;
+					}
+				}
+				if (s){
+					System.out.println("Warning: Ensure that unsigned integer operations do not wrap at line: " + initLine);
+					s = false;
+				}
+				if (s){
+					System.out.println("Warning: Ensure that operations on signed integers do not result in overflow at line: " + initLine);
+					s = false;
+				}
+
+			}
+<<<<<<< HEAD
+=======
+			else{//Cuando son signed
+				if (t.equals("Add")){
+					if (((b > 0) && (a> (MAX_INT - b))) || ((b < 0) && (a < (MIN_INT - b)))) {
+						s = true;
+					}
+				}
+				if (t.equals("Subs")){
+					if ((b > 0 && a < MIN_INT + b) ||  (b < 0 && a > MIN_INT + b)) {
+						s = true;
 					}
 				}
 				if (s){
@@ -114,6 +151,7 @@ public class CFunction extends CBaseListener{
 				}
 
 			}
+>>>>>>> 520dcf6d0b751b99e58bff2edcecd33f0e9a2f62
 		}
 	}
 	@Override 

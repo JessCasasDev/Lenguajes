@@ -41,6 +41,9 @@ id func(void) {
 
   for (int i= 0; i < 10; i++){
 
+<<<<<<< HEAD
 >>>>>>> origin/Archivo1
+=======
+>>>>>>> 520dcf6d0b751b99e58bff2edcecd33f0e9a2f62
   }
 }
