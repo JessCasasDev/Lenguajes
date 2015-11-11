@@ -11,7 +11,12 @@ import org.antlr.v4.runtime.misc.NotNull;
 
 
 public class CFunction extends CBaseListener{
+<<<<<<< HEAD
 	int UNIT_MAX =  Integer.MAX_VALUE; 
+=======
+	int MAX_INT =  Integer.MAX_VALUE; 
+	int MIN_INT = Integer.MIN_VALUE;
+>>>>>>> origin/Archivo1
 
 	CParser parser;
 
@@ -27,12 +32,17 @@ public class CFunction extends CBaseListener{
 	/**********************************************************OVERRIDED RULES**************************************************/
 	/***************************************************************************************************************************/
 
+	
 	@Override 
-	public void exitAdditiveExpression(@NotNull CParser.AdditiveExpressionContext ctx) { 
+	public void exitAdditiveExpression(@NotNull CParser.AdditiveExpressionContext ctx) 
+	{ 
 		if (ctx.additiveExpression() != null && ctx.multiplicativeExpression() != null){
 			int initLine = ctx.getStart().getLine();
 			String tokens = parser.getTokenStream().getText(ctx);
 			String t = "";
+
+			int a = Integer.valueOf(ctx.additiveExpression().getText());
+			int b = Integer.valueOf(ctx.multiplicativeExpression().getText());
 			for (int i=0; i<tokens.length(); i++){
 				if (tokens.charAt(i) == '+'){
 					t = "Add";
@@ -43,9 +53,8 @@ public class CFunction extends CBaseListener{
 					break;
 				}
 			}
-			int a = Integer.valueOf(ctx.additiveExpression().getText());
-			int b = Integer.valueOf(ctx.multiplicativeExpression().getText());
 			Boolean s = false;
+<<<<<<< HEAD
 					if (a > 0 && b > 0){ //Significa que son Unsigned
 						if (t.equals("Add")){
 							if (UNIT_MAX - a < b)
@@ -66,9 +75,47 @@ public class CFunction extends CBaseListener{
 								System.out.println(a-b);
 						}
 						if (s) System.out.println("Warning: Ensure that unsigned integer operations do not wrap at line: " + initLine);
+=======
+			if (a > 0 && b > 0){ //Significa que son Unsigned
+				if (t.equals("Add")){
+					if (MAX_INT - a < b)
+						s = true;
+					else if (a+b<a)
+						s = true;
+				}
+				if (t.equals("Subs")){
+					if (a < b){
+						s = true;
+>>>>>>> origin/Archivo1
+					}
+					else if (a-b > a){
+						s = true;
 					}
 				}
+				if (s){
+					System.out.println("Warning: Ensure that unsigned integer operations do not wrap at line: " + initLine);
+					s = false;
+				}
 			}
+			else{//Cuando son signed
+				if (t.equals("Add")){
+					if (((b > 0) && (a> (MAX_INT - b))) || ((b < 0) && (a < (MIN_INT - b)))) {
+						s = true;
+					}
+				}
+				if (t.equals("Subs")){
+					if ((b > 0 && a < MIN_INT + b) ||  (b < 0 && a > MIN_INT + b)) {
+						s = true;
+					}
+				}
+				if (s){
+					System.out.println("Warning: Ensure that operations on signed integers do not result in overflow at line: " + initLine);
+					s = false;
+				}
+
+			}
+		}
+	}
 	@Override 
 	public void exitUnaryExpression(@NotNull CParser.UnaryExpressionContext ctx) 
 	{ 
@@ -76,6 +123,67 @@ public class CFunction extends CBaseListener{
 			if (ctx.unaryOperator().getText().equals('-')){
 				int value = Math.abs(Integer.valueOf(ctx.castExpression().getText()))*-1;
 			}
+		}
+	}
+
+	@Override 
+	public void enterMultiplicativeExpression(CParser.MultiplicativeExpressionContext ctx) 
+	{ 
+		if (ctx.multiplicativeExpression() != null && ctx.castExpression() != null){
+			int a = Integer.valueOf(ctx.multiplicativeExpression().getText());
+			int b = Integer.valueOf(ctx.castExpression().getText());
+			String tokens = parser.getTokenStream().getText(ctx);
+			String type = "";
+			int initLine = ctx.getStart().getLine();
+
+			for (int i=0; i<tokens.length(); i++){
+				if (tokens.charAt(i) == '/'){
+					type = "div";
+				}
+				if (tokens.charAt(i) == '%'){
+					type = "mod";
+				}
+			}
+			if (type.equals("div") || type.equals("mod")){
+				if (b == 0){
+					System.out.println("Error: Ensure that division and remainder operations do not result in divide-by-zero errors at line: " + initLine);
+				}
+			}
+		}
+
+	}
+
+	@Override 
+	public void enterPrimaryExpression(CParser.PrimaryExpressionContext ctx) 
+	{ 
+		//TODO  SOLO SE PUEDE CON INTEGER 
+	/*	if (ctx.Constant() != null){
+			int initLine = ctx.getStart().getLine();
+		//Caso de Entero  //TODO REVISAR COMO SE DIFERENCIA EL ENTERO CON EL FLOTANTE 
+			int num = Integer.valueOf(ctx.Constant().getText());
+			int precision = 0;
+			while (num != 0) {
+				if (num % 2 == 1) {
+					precision++;
+				}
+				num >>= 1.0;
+			}
+
+			if (precision > 32){
+				System.out.println("Warning: Use correct integer precisions at line: " + initLine);
+			}
+		}*/
+
+	}
+
+	@Override 
+	public void enterIterationStatement(CParser.IterationStatementContext ctx) 
+	{ 
+		String tokens = parser.getTokenStream().getText(ctx);
+		String t = String.valueOf(ctx.getToken(0,1));
+		System.out.println("ttttttttttt" + t);
+		if (t.equals("for")){
+
 		}
 	}
 	/*
