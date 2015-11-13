@@ -11,17 +11,6 @@ import org.antlr.v4.runtime.misc.NotNull;
 public class CFunction extends CBaseListener{
 	int MAX_INT =  Integer.MAX_VALUE; 
 	int MIN_INT = Integer.MIN_VALUE;
-<<<<<<< HEAD
-//>>> origin/Archivo1
-////=
-	/*
-	int MAX_INT =  Integer.MAX_VALUE; 
-	int MIN_INT = Integer.MIN_VALUE;
-//>>> 520dcf6d0b751b99e58bff2edcecd33f0e9a2f62
-*/
-=======
-
->>>>>>> origin/Archivo1
 	CParser parser;
 
 
@@ -35,7 +24,7 @@ public class CFunction extends CBaseListener{
 	/***************************************************************************************************************************/
 	/**********************************************************OVERRIDED RULES**************************************************/
 	/***************************************************************************************************************************/
-	
+	//Linea de prueba
 	
 	@Override 
 	public void exitUnaryExpression(@NotNull CParser.UnaryExpressionContext ctx) 
