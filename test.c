@@ -1,4 +1,3 @@
-<<<<<<< HEAD
   int close_stdout(void) {
     if (fclose(stdout) == EOF) {
       return -1;
@@ -9,7 +8,7 @@
     printf("stdout successfully closed.\n");
     return 0;
   }
-=======
+
 void open_some_file(const char *file) {
   FILE *f = fopen(file, "r");
   if (NULL != f) {
@@ -56,4 +55,3 @@ id func(void) {
 
   }
 }
->>>>>>> origin/Archivo1

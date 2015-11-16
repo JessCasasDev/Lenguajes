@@ -225,11 +225,97 @@ public class CFunction extends CBaseListener{
 		int ruleLine = ctx.getStart().getLine();
 		String q = ctx.getText();
 		if (q.contains("+") || q.contains("-"))
-			regla(q, ruleLine);
+			rule_int30_32_C(q, ruleLine);
 
 	}
 
-	public void regla(String t, int line){
+	
+	//Solo una linea de prueba
+
+	@Override public void exitInitDeclaratorList(CParser.InitDeclaratorListContext ctx)
+	{
+
+	}
+
+
+
+	@Override 
+	public void exitPostfixExpression(CParser.PostfixExpressionContext ctx) 
+	{
+		String tokens= parser.getTokenStream().getText(ctx);
+		int ruleLine = ctx.getStart().getLine();
+
+
+		
+	}
+
+	/***************************************************************************************************************************/
+	/**********************************************************AUXILIARY METHODS*************************************************/
+	/***************************************************************************************************************************/
+
+
+	void exp32C(String leftVariable, String rightVariable, int ruleLine)
+	{
+		if (leftVariable.charAt(0) == '*') 
+		{
+			leftVariable = leftVariable.substring(1,leftVariable.length());
+		}
+		
+		int lengthRight = rightVariable.length()-1;
+		String aux  = "";
+		while ( !(rightVariable.charAt(lengthRight) == ('&') || rightVariable.charAt(lengthRight) == ('*')) && lengthRight > 0 )
+		{
+			aux = aux+=rightVariable.charAt(lengthRight)+"";
+			lengthRight--;
+		}
+		StringBuffer reverse = new StringBuffer(aux);
+		aux = new String(reverse.reverse());
+		//System.out.println(aux);
+		rightVariable = aux;
+
+
+
+		if ( variables.get(leftVariable).contains("volatile") && !variables.get(rightVariable).contains("volatile")) 
+		{
+			System.out.println("Warning:  Volatile objects can not be accessed through a non-volatile-qualified reference");
+			System.out.println("Line: " + ruleLine);
+		}
+	}
+
+	void exp30C(String tokens, int ruleLine)
+	{
+		System.out.println("Entre a exp30C");
+		String insideLimiters = tokens.substring(tokens.indexOf('[')+1,tokens.indexOf(']'));
+		String afterEqual = tokens.substring(tokens.indexOf('=')+1,tokens.length());
+		if( insideLimiters.contains("+") || insideLimiters.contains("-"))//chequear que la variable tenga ++ 
+		{
+			String variable;
+			if(insideLimiters.charAt(0) == '+' || insideLimiters.charAt(0) == '-')
+			{
+				variable = insideLimiters.substring(2,insideLimiters.length());
+			}
+			else
+			{
+				if (insideLimiters.contains("+")) {
+					variable = insideLimiters.substring(0,insideLimiters.indexOf('+'));	
+				}
+				else
+					variable = insideLimiters.substring(0,insideLimiters.indexOf('-'));		
+				
+			}
+
+			if (afterEqual.contains(variable)) {
+				System.out.println("Warning: The order of evaluation of arguments is unspecified and can happen in any order");
+				System.out.println("At line:" + ruleLine);
+			}
+
+		}
+	}
+
+
+}
+
+void rule_int30_32_C(String t, int line){
 		String f = t;
 		Boolean unsigned = false, signed = false;
 		if (f.contains("unsigned")){
@@ -332,89 +418,3 @@ public class CFunction extends CBaseListener{
 			}
 		}
 	}
-	
-	//Solo una linea de prueba
-
-	@Override public void exitInitDeclaratorList(CParser.InitDeclaratorListContext ctx)
-	{
-
-	}
-
-
-
-	@Override 
-	public void exitPostfixExpression(CParser.PostfixExpressionContext ctx) 
-	{
-		String tokens= parser.getTokenStream().getText(ctx);
-		int ruleLine = ctx.getStart().getLine();
-
-
-		
-	}
-
-	/***************************************************************************************************************************/
-	/**********************************************************AUXILIARY METHODS*************************************************/
-	/***************************************************************************************************************************/
-
-
-	void exp32C(String leftVariable, String rightVariable, int ruleLine)
-	{
-		if (leftVariable.charAt(0) == '*') 
-		{
-			leftVariable = leftVariable.substring(1,leftVariable.length());
-		}
-		
-		int lengthRight = rightVariable.length()-1;
-		String aux  = "";
-		while ( !(rightVariable.charAt(lengthRight) == ('&') || rightVariable.charAt(lengthRight) == ('*')) && lengthRight > 0 )
-		{
-			aux = aux+=rightVariable.charAt(lengthRight)+"";
-			lengthRight--;
-		}
-		StringBuffer reverse = new StringBuffer(aux);
-		aux = new String(reverse.reverse());
-		//System.out.println(aux);
-		rightVariable = aux;
-
-
-
-		if ( variables.get(leftVariable).contains("volatile") && !variables.get(rightVariable).contains("volatile")) 
-		{
-			System.out.println("Warning:  Volatile objects can not be accessed through a non-volatile-qualified reference");
-			System.out.println("Line: " + ruleLine);
-		}
-	}
-
-	void exp30C(String tokens, int ruleLine)
-	{
-		System.out.println("Entre a exp30C");
-		String insideLimiters = tokens.substring(tokens.indexOf('[')+1,tokens.indexOf(']'));
-		String afterEqual = tokens.substring(tokens.indexOf('=')+1,tokens.length());
-		if( insideLimiters.contains("+") || insideLimiters.contains("-"))//chequear que la variable tenga ++ 
-		{
-			String variable;
-			if(insideLimiters.charAt(0) == '+' || insideLimiters.charAt(0) == '-')
-			{
-				variable = insideLimiters.substring(2,insideLimiters.length());
-			}
-			else
-			{
-				if (insideLimiters.contains("+")) {
-					variable = insideLimiters.substring(0,insideLimiters.indexOf('+'));	
-				}
-				else
-					variable = insideLimiters.substring(0,insideLimiters.indexOf('-'));		
-				
-			}
-
-			if (afterEqual.contains(variable)) {
-				System.out.println("Warning: The order of evaluation of arguments is unspecified and can happen in any order");
-				System.out.println("At line:" + ruleLine);
-			}
-
-		}
-	}
-
-
-}
-
