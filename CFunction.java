@@ -40,8 +40,6 @@ public class CFunction extends CBaseListener{
 	public void enterMultiplicativeExpression(CParser.MultiplicativeExpressionContext ctx) 
 	{ 
 		if (ctx.multiplicativeExpression() != null && ctx.castExpression() != null){
-		//	String w = variables.get(q);
-	//		System.out.println(w);
 			int a = Integer.valueOf(ctx.multiplicativeExpression().getText());
 			int b = Integer.valueOf(ctx.castExpression().getText());
 			String tokens = parser.getTokenStream().getText(ctx);
