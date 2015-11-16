@@ -43,7 +43,7 @@ id func(void) {
 
 
  void func(unsigned int a, unsigned int b) {
-  signed int usum = 956 +2147483647 ; //Warning Wrap 
+  unsigned int usum = 956 +2147483647 ; //Warning Wrap 
 
   signed int suma = -6 + 2147483645; //Warning Overflow
 

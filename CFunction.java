@@ -117,15 +117,7 @@ public class CFunction extends CBaseListener{
 
 		}
 	}
-	/*
-	@Override 
-	public void enterConstantExpression(CParser.ConstantExpressionContext ctx) {
-		if (ctx.IntegerConstant != null){
-			if (Integer.valueOf(ctx.IntegerConstant().getText()) > UNIT_MAX){
-					System.out.println("Error: " + ctx.IntegerConstant().getText() + " It's too big, the min value of int is: " + UNIT_MAX);
-				}
-		}
-	}*/
+	
 	ArrayList<String> filesInStream =  new ArrayList<>();
 	ArrayList<String> filePositionFucntion =  new ArrayList<>();
 	ArrayList<String> fuctions = new ArrayList<>();
@@ -225,7 +217,7 @@ public class CFunction extends CBaseListener{
 		int ruleLine = ctx.getStart().getLine();
 		String q = ctx.getText();
 		if (q.contains("+") || q.contains("-"))
-			rule_int30_32_C(q, ruleLine);
+			ruleint3032C(q, ruleLine);
 
 	}
 
@@ -312,10 +304,7 @@ public class CFunction extends CBaseListener{
 		}
 	}
 
-
-}
-
-void rule_int30_32_C(String t, int line){
+void ruleint3032C(String t, int line){
 		String f = t;
 		Boolean unsigned = false, signed = false;
 		if (f.contains("unsigned")){
@@ -418,3 +407,4 @@ void rule_int30_32_C(String t, int line){
 			}
 		}
 	}
+}
