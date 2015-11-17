@@ -2,8 +2,8 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+//import java.util.regex.Matcher;
+//import java.util.regex.Pattern;
 import java.util.StringTokenizer;
 import org.antlr.v4.runtime.misc.NotNull;
 
@@ -28,7 +28,7 @@ public class CFunction extends CBaseListener{
 	/***************************************************************************************************************************/
 	/**********************************************************OVERRIDED RULES**************************************************/
 	/***************************************************************************************************************************/
-	//Linea de prueba
+	
 	
 	@Override 
 	public void exitUnaryExpression(@NotNull CParser.UnaryExpressionContext ctx) 
@@ -100,7 +100,7 @@ public class CFunction extends CBaseListener{
 		}
 
 	}
-
+/*comentario Random: Hola Rodrigo! :D*/
 	@Override 
 	public void enterPrimaryExpression(CParser.PrimaryExpressionContext ctx) 
 	{ 
@@ -182,7 +182,7 @@ public class CFunction extends CBaseListener{
 			{
 				String leftVariable = ctx.unaryExpression().getText();
 				String rightVariable = ctx.assignmentExpression().getText();
-				exp32C(leftVariable,rightVariable,ruleLine);
+				assignmentErrorHandling(leftVariable,rightVariable,ruleLine);
 			}
 
 		}
@@ -282,7 +282,7 @@ public class CFunction extends CBaseListener{
 	/***************************************************************************************************************************/
 
 
-	void exp32C(String leftVariable, String rightVariable, int ruleLine)
+	void assignmentErrorHandling(String leftVariable, String rightVariable, int ruleLine)
 	{
 		if (leftVariable.charAt(0) == '*') 
 		{
@@ -301,10 +301,18 @@ public class CFunction extends CBaseListener{
 		//System.out.println(aux);
 		rightVariable = aux;
 
+		/*EXP32C*/
 		if ( variables.get(leftVariable).contains("volatile") && !variables.get(rightVariable).contains("volatile")) 
 		{
 			System.out.println("Warning:  Volatile objects can not be accessed through a non-volatile-qualified reference");
 			System.out.println("Line: " + ruleLine);
+		}
+
+		/*EXP40-C*/
+		if(variables.get(leftVariable).contains("const") && !variables.get(rightVariable).contains("const"))
+		{
+			System.out.println("Warning: Do not modify constant objects");
+			System.out.println("At line: " + ruleLine);
 		}
 	}
 

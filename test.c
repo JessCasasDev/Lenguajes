@@ -1,3 +1,4 @@
+
  int close_stdout(void) {
     if (fclose(stdout) == EOF) {
       return -1;
@@ -35,11 +36,18 @@ id func(void) {
   static volatile int i = 0;
  
   printf("i = %d.\n", i);
+
+const int **ipp;
+int *ip;
+const int i = 42;
+}
  
-  ipp = &ip; /* May produce a warning diagnostic */
-  ipp = (int**) &ip; /* Constraint violation; may produce a warning diagnostic */
+void func(void) {
+  ipp = &ip; /* Constraint violation */
   *ipp = &i; /* Valid */
-  }
+  *ip = 0;   /* Modifies constant i (was 42) */
+}
+
 
 
  void func(unsigned int a, unsigned int b) {
@@ -56,6 +64,7 @@ id func(void) {
   signed int division = 3 % 0; //Error Division por 0   
  
 }
+
 
   void func(void) {
   signed int si = -56;
