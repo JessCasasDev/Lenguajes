@@ -1,4 +1,4 @@
-  int close_stdout(void) {
+ int close_stdout(void) {
     if (fclose(stdout) == EOF) {
       return -1;
     }
@@ -25,7 +25,7 @@ void open_some_file(const char *file) {
     /* Write to file */
   if (fclose(f) == EOF) {
       /* Handle error */
-    }
+   }
   }
 }
 
@@ -43,15 +43,24 @@ id func(void) {
 
 
  void func(unsigned int a, unsigned int b) {
-  unsigned int usum = 956 +2147483647 ; //Warning Wrap 
-
-  signed int suma = -6 + 2147483645; //Warning Overflow
+  unsigned int a = 956;
+  unsigned int b = 2147483647;
+  unsigned int usum = a +b ; //Warning Wrap 
+  
+  signed int c = -128731;
+  signed int d = -2147483647;
+  signed int suma = c + d; //Warning Overflow
 
   signed int division = 3 / 0; //Error Division por 0 
 
   signed int division = 3 % 0; //Error Division por 0   
+ 
+}
 
-  for (int i= 0; i < 10; i++){
-
-  }
+  void func(void) {
+  signed int si = -56;
+  /* Cast eliminates warning */
+  unsigned int ui = (unsigned int)si;
+ 
+  /* ... */
 }

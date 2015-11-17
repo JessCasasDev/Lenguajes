@@ -12,7 +12,11 @@ public class CFunction extends CBaseListener{
 	int MAX_INT =  Integer.MAX_VALUE; 
 	int MIN_INT = Integer.MIN_VALUE;
 	CParser parser;
-
+	HashMap<String, String> variablesValue = new HashMap<>();
+	//<String,String>
+	//Identifier, Types!
+	HashMap<String,ArrayList<String>> variables =  new HashMap<>();
+	ArrayList<String> types =  new ArrayList<>();
 
 	public CFunction(CParser parser)
 	{
@@ -37,7 +41,41 @@ public class CFunction extends CBaseListener{
 	}
 
 	@Override 
-	public void enterMultiplicativeExpression(CParser.MultiplicativeExpressionContext ctx) 
+	public void exitAdditiveExpression(CParser.AdditiveExpressionContext ctx) 
+	{ 
+		int line = ctx.getStart().getLine();
+		
+		if (ctx.additiveExpression() != null && ctx.multiplicativeExpression() != null){
+			String var_a = ctx.additiveExpression().getText();
+			String var_b = ctx.multiplicativeExpression().getText();
+			ArrayList<String> type = new ArrayList();
+			String type_a="", type_b="";
+			int a = 0, b=0;
+			if(variablesValue.containsKey(var_a)){
+				 a = Integer.valueOf(variablesValue.get(var_a));
+				 type = variables.get(var_a);
+				 type_a = type.get(0);
+			}
+			else {
+				a = Integer.valueOf(var_a);
+			}
+			if(variablesValue.containsKey(var_b)){
+				b = Integer.valueOf(variablesValue.get(var_b));
+				type = variables.get(var_b);
+				type_b = type.get(0);
+			}
+			else{
+				b = Integer.valueOf(var_b);
+ 			}
+ 			String operator = "";
+ 			if (ctx.getText().contains("+")) operator = "suma";
+ 			else operator = "resta";
+ 			
+ 			ruleint3032C(a,b,type_a,type_b,operator, line); 			
+		}
+	}
+
+	@Override public void enterMultiplicativeExpression(CParser.MultiplicativeExpressionContext ctx) 
 	{ 
 		if (ctx.multiplicativeExpression() != null && ctx.castExpression() != null){
 			int a = Integer.valueOf(ctx.multiplicativeExpression().getText());
@@ -192,12 +230,6 @@ public class CFunction extends CBaseListener{
 		}
 	}
 
-
-	//<String,String>
-	//Identifier, Types!
-	HashMap<String,ArrayList<String>> variables =  new HashMap<>();
-	ArrayList<String> types =  new ArrayList<>();
-
 	
 	@Override public void exitDeclarationSpecifier(CParser.DeclarationSpecifierContext ctx)
 	{
@@ -210,19 +242,40 @@ public class CFunction extends CBaseListener{
 		types = new ArrayList<>();
 
 	}
-	@Override public void exitDeclaration(CParser.DeclarationContext ctx)
-	{
+	
+	@Override 
+	public void enterInitDeclarator(CParser.InitDeclaratorContext ctx) { 
+		
+		if (ctx.declarator()!=null && ctx.initializer()!= null)
+				variablesValue.put(ctx.declarator().getText(), ctx.initializer().getText());
 
-		String tokens= parser.getTokenStream().getText(ctx);
-		int ruleLine = ctx.getStart().getLine();
-		String q = ctx.getText();
-		if (q.contains("+") || q.contains("-"))
-			ruleint3032C(q, ruleLine);
-
+			else
+				variablesValue.put(ctx.declarator().getText(), "No Value");	
 	}
 
-	
-	//Solo una linea de prueba
+	@Override 
+	public void exitCastExpression(CParser.CastExpressionContext ctx) 
+	{
+		int ruleLine = ctx.getStart().getLine();
+		if (ctx.typeName()!= null && ctx.castExpression()!=null){
+			String type = "";
+			if (ctx.typeName().getText().contains("unsigned"))
+				type= "unsigned";
+			else 
+				type = "signed";
+			String var = ctx.castExpression().getText();
+			if (variables.containsKey(var)){
+				ArrayList<String> objects = variables.get(var);
+				if (!type.equals(objects.get(0))){
+					if (variablesValue.containsKey(var)){
+						int y = Integer.valueOf(variablesValue.get(var));
+						if (y<0)
+							System.out.println("Warning: Ensure that integer conversions do not result in lost or misinterpreted data in Line: " + ruleLine);	
+					}
+				}
+			}
+		}
+	}
 
 	@Override public void exitInitDeclaratorList(CParser.InitDeclaratorListContext ctx)
 	{
@@ -236,9 +289,6 @@ public class CFunction extends CBaseListener{
 	{
 		String tokens= parser.getTokenStream().getText(ctx);
 		int ruleLine = ctx.getStart().getLine();
-
-
-		
 	}
 
 	/***************************************************************************************************************************/
@@ -264,8 +314,6 @@ public class CFunction extends CBaseListener{
 		aux = new String(reverse.reverse());
 		//System.out.println(aux);
 		rightVariable = aux;
-
-
 
 		if ( variables.get(leftVariable).contains("volatile") && !variables.get(rightVariable).contains("volatile")) 
 		{
@@ -303,108 +351,38 @@ public class CFunction extends CBaseListener{
 
 		}
 	}
-
-void ruleint3032C(String t, int line){
-		String f = t;
-		Boolean unsigned = false, signed = false;
-		if (f.contains("unsigned")){
-			f = f.substring("unsigned".length(),f.length() );
-			unsigned = true;
-		}
-		if (f.contains("signed")){
-
-			f = f.substring("signed".length(),f.length() );
-			signed = true;
-		}
-
-		if (f.contains("int")){
-			f = f.substring("int".length(), f.length());
-			String var  = "";
-			while (f.contains(";")){
-				for (int i=0; i<f.length(); i++){
-					if (!(f.charAt(i) == '=')){
-						var = var + f.charAt(i);
-					}
-					else{
-						break;
-					}
-				}
-
-				int pos_in = f.indexOf("=");
-				String a ="";
-				int in_op = 0;
-				char op = 'a';
-				if ((f.charAt(pos_in+1)) == '-') {
-					a = a+'-';
-					pos_in++;
-				}
-				for (int i=pos_in+1; i<f.length(); i++){
-					if (!((f.charAt(i) == '-') || (f.charAt(i) == '+'))){
-						a = a + f.charAt(i);
-					}
-					else{
-						op = f.charAt(i);
-						in_op = i;
-						break;
-					}
-				}
-				String b = "";
-				for (int i=in_op+1; i<f.length(); i++){
-					if (!(f.charAt(i) == ';')) {
-						b = b + f.charAt(i);
-					}
-					else{
-						f = f.substring(0,f.length()-1);
-						break;
-					}
-				}
+	void ruleint3032C(int a,int b,String type_a,String type_b,String operator, int line){
+		Boolean s = false;
+		if (type_a.equals("signed") && type_b.equals("signed")){
+			if (operator.equals("suma")){
+				if (((b > 0) && (a > (MAX_INT - b))) || ((b < 0) && (a < (MIN_INT - b)))) 
+					s = true;
 				
-				if (b.contains("(") && b.contains("-")) b=b.substring(1,b.length()-1);
+			}	
+			if (operator.equals("resta")){
+				if ((b> 0 && a< MIN_INT + b) ||  (b < 0 && a > MIN_INT + b)  || (a-b > a))  
+					s = true;
 
-				Integer a_s = 0;
-				if (a.charAt(0) == '-'){
-					a = a.substring(1,a.length());
-					a_s	= Integer.valueOf(a);
-				}
-				else a_s = Integer.valueOf(a);
-
-				Integer b_s = Integer.valueOf(b);
-				Boolean s = false;	
-
-				if (unsigned){					
-
-					if (op =='+' ){
-						if ((MAX_INT - a_s < b_s) || (a_s+b_s<a_s))
-							s = true;
-					}
-					if (op == '-') 	{
-						if ((a_s < b_s) || (a_s-b_s > a_s)){
-							s = true;
-						}
-					}
-					if (s){
-						System.out.println("Warning: Ensure that unsigned integer operations do not wrap at line: " + line);
-						s = false;
-					}
-				}
-				if(signed){
-
-					if (op =='+'){
-						if (((b_s > 0) && (a_s> (MAX_INT - b_s))) || ((b_s < 0) && (a_s < (MIN_INT - b_s)))) {
-							s = true;
-						}
-					}
-					if (op == '-'){
-						if ((b_s > 0 && a_s < MIN_INT + b_s) ||  (b_s < 0 && a_s > MIN_INT + b_s)  || (a_s-b_s > a_s))  {
-							s = true;
-						}
-					}
-					if (s){
-						System.out.println("Warning: Ensure that operations on signed integers do not result in overflow at line: " + line);
-						s = false;
-					}
-				}
+			}
+			if (s){
+				System.out.println("Warning: Ensure that operations on signed integers do not result in overflow at line: " + line);
+				s = false;
 			}
 		}
+		else if (type_a.equals("unsigned") && type_b.equals("unsigned")){
+			if (operator.equals("suma") ){
+				if ((MAX_INT - a < b) || (a+b<a))
+					s = true;
+			}
+			if (operator.equals("resta")) 	{
+				if ((a < b) || (a-b > a)){
+					s = true;
+				}
+			}
+			if (s){
+				System.out.println("Warning: Ensure that unsigned integer operations do not wrap at line: " + line);
+				s = false;
+			}
+		}		
 	}
 }
