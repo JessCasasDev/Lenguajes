@@ -1,45 +1,13 @@
-  int close_stdout(void) {
-    if (fclose(stdout) == EOF) {
-      return -1;
-    }
-
-    //fputs("stdout successfully closed.", stderr);
-    
-    printf("stdout successfully closed.\n");
-    return 0;
-  }
-
-void open_some_file(const char *file) {
-  FILE *f = fopen(file, "r");
-  if (NULL != f) {
-    /* File exists, handle error */
-  } else {
-    if (fclose(f) == EOF) {
-      /* Handle error */
-    }
-    f = fopen(file, "w");
-    if (NULL == f) {
-      /* Handle error */
-   }
-  
-    /* Write to file */
-  if (fclose(f) == EOF) {
-      /* Handle error */
-    }
-  }
-}
-
-id func(void) {
-  static volatile int **ipp;
-  static int *ip;
-  static volatile int i = 0;
+const int **ipp;
+int *ip;
+const int i = 42;
  
-  printf("i = %d.\n", i);
- 
-  ipp = &ip; /* May produce a warning diagnostic */
-  ipp = (int**) &ip; /* Constraint violation; may produce a warning diagnostic */
+void func(void) {
+  ipp = &ip; /* Constraint violation */
   *ipp = &i; /* Valid */
-  }
+  *ip = 0;   /* Modifies constant i (was 42) */
+}
+/*
 
 
  void func(unsigned int a, unsigned int b) {
@@ -55,3 +23,4 @@ id func(void) {
 
   }
 }
+*/

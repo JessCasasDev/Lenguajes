@@ -39,6 +39,8 @@ FIO45-C
 FIO46-C
 	https://www.securecoding.cert.org/confluence/display/c/FIO46-C.+Do+not+access+a+closed+file
 
+EXP40-C
+	https://www.securecoding.cert.org/confluence/display/c/EXP40-C.+Do+not+modify+constant+objects	
 ***********************************************************************************************************************************************
 
 
@@ -46,7 +48,7 @@ Rule 04. Integers (INT)
 
 
 
-INT30-C.
+INT30-C. 
 	https://www.securecoding.cert.org/confluence/display/c/INT30-C.+Ensure+that+unsigned+integer+operations+do+not+wrap
 
 	Ensure that unsigned integer operations do not wrap
