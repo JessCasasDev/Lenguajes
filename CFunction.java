@@ -160,13 +160,6 @@ public class CFunction extends CBaseListener{
 	ArrayList<String> filePositionFucntion =  new ArrayList<>();
 	ArrayList<String> fuctions = new ArrayList<>();
 
-	@Override 
-	public void exitTypedefName(CParser.TypedefNameContext ctx) 
-	{
-		
-	}
-
-
 
 	@Override public void exitAssignmentExpression(CParser.AssignmentExpressionContext ctx)
 	{
@@ -276,13 +269,6 @@ public class CFunction extends CBaseListener{
 			}
 		}
 	}
-
-	@Override public void exitInitDeclaratorList(CParser.InitDeclaratorListContext ctx)
-	{
-
-	}
-
-
 
 	@Override 
 	public void exitPostfixExpression(CParser.PostfixExpressionContext ctx) 
