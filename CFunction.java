@@ -100,29 +100,6 @@ public class CFunction extends CBaseListener{
 		}
 
 	}
-/*comentario Random: Hola Rodrigo! :D*/
-	@Override 
-	public void enterPrimaryExpression(CParser.PrimaryExpressionContext ctx) 
-	{ 
-		//TODO  SOLO SE PUEDE CON INTEGER 
-	/*	if (ctx.Constant() != null){
-			int initLine = ctx.getStart().getLine();
-		//Caso de Entero  //TODO REVISAR COMO SE DIFERENCIA EL ENTERO CON EL FLOTANTE 
-			int num = Integer.valueOf(ctx.Constant().getText());
-			int precision = 0;
-			while (num != 0) {
-				if (num % 2 == 1) {
-					precision++;
-				}
-				num >>= 1.0;
-			}
-
-			if (precision > 32){
-				System.out.println("Warning: Use correct integer precisions at line: " + initLine);
-			}
-		}*/
-
-	}
 
 	@Override public void exitBlockItem(CParser.BlockItemContext ctx)
 	{
@@ -146,16 +123,6 @@ public class CFunction extends CBaseListener{
 	}
 
 
-	@Override 
-	public void enterIterationStatement(CParser.IterationStatementContext ctx) 
-	{ 
-		String tokens = parser.getTokenStream().getText(ctx);
-		String t = String.valueOf(ctx.getToken(0,1));
-		if (t.equals("for")){
-
-		}
-	}
-	
 	ArrayList<String> filesInStream =  new ArrayList<>();
 	ArrayList<String> filePositionFucntion =  new ArrayList<>();
 	ArrayList<String> fuctions = new ArrayList<>();
@@ -237,14 +204,19 @@ public class CFunction extends CBaseListener{
 	}
 	
 	@Override 
-	public void enterInitDeclarator(CParser.InitDeclaratorContext ctx) { 
-		
-		if (ctx.declarator()!=null && ctx.initializer()!= null)
-				variablesValue.put(ctx.declarator().getText(), ctx.initializer().getText());
+	public void exitInitDeclarator(CParser.InitDeclaratorContext ctx) { 
 
-			else
-				variablesValue.put(ctx.declarator().getText(), "No Value");	
+		int ruleLine = ctx.getStart().getLine();
+		if (ctx.declarator() !=null && ctx.initializer() != null){
+				variablesValue.put(ctx.declarator().getText(), ctx.initializer().getText());
+				assignVariable(ctx.declarator().getText(), ctx.initializer().getText(),  ruleLine);
+		}
+		else
+			variablesValue.put(ctx.declarator().getText(), "No Value");	
+
+		
 	}
+
 
 	@Override 
 	public void exitCastExpression(CParser.CastExpressionContext ctx) 
@@ -252,16 +224,18 @@ public class CFunction extends CBaseListener{
 		int ruleLine = ctx.getStart().getLine();
 		if (ctx.typeName()!= null && ctx.castExpression()!=null){
 			String type = "";
+			
 			if (ctx.typeName().getText().contains("unsigned"))
-				type= "unsigned";
+				type = "unsigned";
 			else 
 				type = "signed";
 			String var = ctx.castExpression().getText();
 			if (variables.containsKey(var)){
 				ArrayList<String> objects = variables.get(var);
 				if (!type.equals(objects.get(0))){
+					int y=0;
 					if (variablesValue.containsKey(var)){
-						int y = Integer.valueOf(variablesValue.get(var));
+							y = Integer.valueOf(variablesValue.get(var));
 						if (y<0)
 							System.out.println("Warning: Ensure that integer conversions do not result in lost or misinterpreted data in Line: " + ruleLine);	
 					}
@@ -378,5 +352,22 @@ public class CFunction extends CBaseListener{
 				s = false;
 			}
 		}		
+	}
+
+	void assignVariable(String assign, String value, int line){
+		ArrayList<String> v1 = variables.get(assign);
+		
+		if (variables.containsKey(value)){
+			ArrayList<String> v2 = variables.get(value);	
+			for(String s:v1){
+				for(String x:v2){
+					if(s.equals("float") && x.equals("int"))
+						System.out.println("Warning:  Preserve precision when converting integral values to floating-point type at line: " + line);
+					if(s.equals("int") && x.equals("float"))
+						System.out.println("Warning:  Preserve precision when converting integral values to floating-point type at line: " + line);
+				}
+			}
+		}
+
 	}
 }

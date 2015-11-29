@@ -1,3 +1,10 @@
+int main(void) {
+  long int big = 1234567890;
+  float approx = big;
+
+  int k = approx;
+  return 0;
+}
 
  int close_stdout(void) {
     if (fclose(stdout) == EOF) {
@@ -38,7 +45,8 @@ id func(void) {
   printf("i = %d.\n", i);
 
 const int **ipp;
-int *ip;
+in
+t *ip;
 const int i = 42;
 }
  
@@ -69,7 +77,6 @@ void func(void) {
   void func(void) {
   signed int si = -56;
   /* Cast eliminates warning */
-  unsigned int ui = (unsigned int)si;
- 
+  unsigned int ui = (unsigned int)si; //Error Misinterpreted data 
   /* ... */
 }

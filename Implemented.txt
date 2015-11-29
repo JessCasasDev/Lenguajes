@@ -61,11 +61,16 @@ INT31-C.
 
 INT32-C. 
 	https://www.securecoding.cert.org/confluence/display/c/INT32-C.+Ensure+that+operations+on+signed+integers+do+not+result+in+overflow
-	Ensure that operations on signed integers do not result
-	in overflow
-
+	Ensure that operations on signed integers do not result	in overflow
 
 INT33-C. 
 	https://www.securecoding.cert.org/confluence/display/c/INT33-C.+Ensure+that+division+and+remainder+operations+do+not+result+in+divide-by-zero+errors
 	Ensure that division and remainder operations do not result in divide-by-zero errors
+
+
+Rule 05. Floating Point (FLP)
+
+FLP36-C. 
+	https://www.securecoding.cert.org/confluence/display/c/FLP36-C.+Preserve+precision+when+converting+integral+values+to+floating-point+type
+	Preserve precision when converting integral values to floating-point type
 
