@@ -364,7 +364,7 @@ public class CFunction extends CBaseListener{
 					if(s.equals("float") && x.equals("int"))
 						System.out.println("Warning:  Preserve precision when converting integral values to floating-point type at line: " + line);
 					if(s.equals("int") && x.equals("float"))
-						System.out.println("Warning:  Preserve precision when converting integral values to floating-point type at line: " + line);
+						System.out.println("Warning:  Preserve precision when converting floating-point values to int type at line: " + line);
 				}
 			}
 		}
